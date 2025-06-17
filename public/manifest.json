@@ -1,0 +1,25 @@
+{
+  "name": "Anna Masszázs - Professzionális Masszázsterápia",
+  "short_name": "Anna Masszázs",
+  "description": "Professzionális masszázs szolgáltatások Budapesten",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f43f5e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "wellness", "lifestyle"],
+  "lang": "hu",
+  "dir": "ltr"
+}
