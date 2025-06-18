@@ -1,7 +1,11 @@
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 export const metadata = {
   title:
@@ -214,13 +218,13 @@ export default function RootLayout({ children }) {
         {/* Preload kritikus erőforrások */}
         <link
           rel="preload"
-          href="/fonts/inter-var.woff2"
+          href="/fonts/poppins-var.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
         />
       </head>
-      <body className={inter.className}>
+      <body className={poppins.className}>
         {children}
 
         {/* Google Analytics (példa) */}
