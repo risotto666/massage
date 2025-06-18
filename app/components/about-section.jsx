@@ -39,56 +39,16 @@ export default function AboutSection() {
       <div className="container mx-auto">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-rose-600 to-amber-600 bg-clip-text text-transparent mb-6">
-            Miért válaszd a masszázst?
+            Rólam
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            A masszázs nem csak luxus, hanem befektetés az egészségbe és
-            jólétbe. Tudományosan bizonyított előnyei segítenek a mindennapi
-            kihívások leküzdésében.
+            Üdvözlöm az oldalamon! Ismerje meg, ki vagyok, és fedezze fel a
+            masszázs csodálatos előnyeit a test és lélek harmóniájáért.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            const colorClasses = {
-              rose: "from-rose-500 to-pink-500 group-hover:from-rose-600 group-hover:to-pink-600",
-              amber:
-                "from-amber-500 to-orange-500 group-hover:from-amber-600 group-hover:to-orange-600",
-              emerald:
-                "from-emerald-500 to-teal-500 group-hover:from-emerald-600 group-hover:to-teal-600",
-              purple:
-                "from-purple-500 to-indigo-500 group-hover:from-purple-600 group-hover:to-indigo-600",
-            };
-
-            return (
-              <Card
-                key={index}
-                className={`group cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl border-0 bg-white/80 backdrop-blur-sm animate-slide-in-up`}
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <CardContent className="p-8 text-center">
-                  <div
-                    className={`w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r ${
-                      colorClasses[benefit.color]
-                    } flex items-center justify-center transform transition-all duration-300 group-hover:rotate-12 group-hover:scale-110`}
-                  >
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-rose-600 transition-colors duration-300">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {benefit.description}
-                  </p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Personal touch section with background image */}
-        <div className="mt-20 rounded-3xl overflow-hidden animate-fade-in-up delay-1000 relative">
+        {/* Personal touch section with background image - FIRST */}
+        <div className="mb-20 rounded-3xl overflow-hidden animate-fade-in-up">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-20"
             style={{
@@ -174,6 +134,57 @@ export default function AboutSection() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Benefits section - SECOND */}
+        <div className="text-center mb-16 animate-fade-in-up">
+          <h3 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-rose-600 to-amber-600 bg-clip-text text-transparent mb-6">
+            Miért válaszd a masszázst?
+          </h3>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            A masszázs nem csak luxus, hanem befektetés az egészségbe és
+            jólétbe. Tudományosan bizonyított előnyei segítenek a mindennapi
+            kihívások leküzdésében.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+            const colorClasses = {
+              rose: "from-rose-500 to-pink-500 group-hover:from-rose-600 group-hover:to-pink-600",
+              amber:
+                "from-amber-500 to-orange-500 group-hover:from-amber-600 group-hover:to-orange-600",
+              emerald:
+                "from-emerald-500 to-teal-500 group-hover:from-emerald-600 group-hover:to-teal-600",
+              purple:
+                "from-purple-500 to-indigo-500 group-hover:from-purple-600 group-hover:to-indigo-600",
+            };
+
+            return (
+              <Card
+                key={index}
+                className={`group transform transition-all duration-500 hover:scale-105 hover:shadow-2xl border-0 bg-white/80 backdrop-blur-sm animate-slide-in-up`}
+                style={{ animationDelay: `${index * 200}ms` }}
+              >
+                <CardContent className="p-8 text-center">
+                  <div
+                    className={`w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r ${
+                      colorClasses[benefit.color]
+                    } flex items-center justify-center transform transition-all duration-300 group-hover:rotate-12 group-hover:scale-110`}
+                  >
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-rose-600 transition-colors duration-300">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>

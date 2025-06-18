@@ -13,6 +13,8 @@ import {
   CheckCircle,
   Heart,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export default function BookingModal({ isOpen, onClose, preSelectedService }) {
@@ -20,6 +22,9 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [showCustomCalendar, setShowCustomCalendar] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -46,7 +51,7 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
     },
   ];
 
-  const timeSlots = [
+  const weekdayTimeSlots = [
     "09:00",
     "10:00",
     "11:00",
@@ -58,6 +63,114 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
     "17:00",
     "18:00",
   ];
+  const saturdayTimeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00"];
+
+  // Dátum validáció és időpontok beállítása
+  useEffect(() => {
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      const dayOfWeek = date.getDay(); // 0 = vasárnap, 6 = szombat
+
+      if (dayOfWeek === 0) {
+        // Vasárnap - nem engedélyezett
+        setSelectedDate("");
+        setSelectedTime("");
+        setAvailableTimeSlots([]);
+        return;
+      }
+
+      if (dayOfWeek === 6) {
+        // Szombat - korlátozott időpontok
+        setAvailableTimeSlots(saturdayTimeSlots);
+        // Ha a kiválasztott időpont nem elérhető szombaton, töröljük
+        if (selectedTime && !saturdayTimeSlots.includes(selectedTime)) {
+          setSelectedTime("");
+        }
+      } else {
+        // Hétköznap - teljes időpontok
+        setAvailableTimeSlots(weekdayTimeSlots);
+      }
+    } else {
+      setAvailableTimeSlots(weekdayTimeSlots);
+    }
+  }, [selectedDate, selectedTime]);
+
+  // Maximum dátum számítása (1 hónap előre)
+  const getMaxDate = () => {
+    const today = new Date();
+    const maxDate = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      today.getDate()
+    );
+    return maxDate;
+  };
+
+  // Minimum dátum (holnap)
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  };
+
+  // Egyedi naptár funkciók
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    const days = [];
+
+    // Előző hónap napjai (üres cellák)
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+
+    // Aktuális hónap napjai
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDate = new Date(year, month, day);
+      const dayOfWeek = currentDate.getDay();
+      const isDisabled =
+        dayOfWeek === 0 ||
+        currentDate < getMinDate() ||
+        currentDate > getMaxDate();
+
+      days.push({
+        day,
+        date: currentDate,
+        isDisabled,
+        isSunday: dayOfWeek === 0,
+        isSaturday: dayOfWeek === 6,
+      });
+    }
+
+    return days;
+  };
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateSelect = (dateObj) => {
+    if (dateObj.isDisabled) return;
+
+    const formattedDate = formatDate(dateObj.date);
+    setSelectedDate(formattedDate);
+    setSelectedTime("");
+    setShowCustomCalendar(false);
+  };
+
+  const navigateMonth = (direction) => {
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(currentMonth.getMonth() + direction);
+    setCurrentMonth(newMonth);
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -71,6 +184,8 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
     setSelectedDate("");
     setSelectedTime("");
     setIsSuccess(false);
+    setShowCustomCalendar(false);
+    setAvailableTimeSlots(weekdayTimeSlots);
     setFormData({
       name: "",
       phone: "",
@@ -82,6 +197,16 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Dátum validáció
+    const date = new Date(selectedDate);
+    const dayOfWeek = date.getDay();
+
+    if (dayOfWeek === 0) {
+      alert("Vasárnap zárva vagyunk! Kérjük, válasszon másik napot.");
+      return;
+    }
+
     // Itt történne az időpont foglalás logika
     console.log("Foglalás adatok:", {
       service: selectedService,
@@ -96,7 +221,7 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
     // 5 másodperc után automatikus bezárás
     setTimeout(() => {
       handleClose();
-    }, 15000);
+    }, 5000);
   };
 
   if (!isOpen) return null;
@@ -207,7 +332,7 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
 
               {/* Automatikus bezárás jelzés */}
               <p className="text-sm text-gray-500 mt-4">
-                Ez az ablak 15 másodperc múlva automatikusan bezáródik
+                Ez az ablak 5 másodperc múlva automatikusan bezáródik
               </p>
             </CardContent>
           </Card>
@@ -280,14 +405,140 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
                   <Calendar className="w-5 h-5 text-rose-500" />
                   <span>Válasszon dátumot</span>
                 </label>
-                <Input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={new Date().toISOString().split("T")[0]}
-                  className="border-rose-200 focus:border-rose-500 focus:ring-rose-500 text-lg p-4"
-                  required
-                />
+
+                {/* Egyedi naptár */}
+                <div className="relative">
+                  <div
+                    className="border-2 border-rose-200 rounded-lg p-4 cursor-pointer hover:border-rose-500 transition-colors duration-300 bg-white"
+                    onClick={() => setShowCustomCalendar(!showCustomCalendar)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={
+                          selectedDate ? "text-gray-800" : "text-gray-500"
+                        }
+                      >
+                        {selectedDate
+                          ? new Date(selectedDate).toLocaleDateString("hu-HU")
+                          : "Válasszon dátumot"}
+                      </span>
+                      <Calendar className="w-5 h-5 text-rose-500" />
+                    </div>
+                  </div>
+
+                  {showCustomCalendar && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-rose-200 rounded-lg shadow-xl z-10 p-4">
+                      {/* Naptár fejléc */}
+                      <div className="flex items-center justify-between mb-4">
+                        <button
+                          type="button"
+                          onClick={() => navigateMonth(-1)}
+                          className="p-2 hover:bg-rose-50 rounded-full transition-colors duration-300"
+                        >
+                          <ChevronLeft className="w-5 h-5 text-rose-500" />
+                        </button>
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {currentMonth.toLocaleDateString("hu-HU", {
+                            year: "numeric",
+                            month: "long",
+                          })}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => navigateMonth(1)}
+                          className="p-2 hover:bg-rose-50 rounded-full transition-colors duration-300"
+                        >
+                          <ChevronRight className="w-5 h-5 text-rose-500" />
+                        </button>
+                      </div>
+
+                      {/* Hét napjai */}
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {["V", "H", "K", "Sz", "Cs", "P", "Sz"].map(
+                          (day, index) => (
+                            <div
+                              key={index}
+                              className="text-center text-sm font-medium text-gray-500 p-2"
+                            >
+                              {day}
+                            </div>
+                          )
+                        )}
+                      </div>
+
+                      {/* Naptár napok */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {getDaysInMonth(currentMonth).map((dayObj, index) => {
+                          if (!dayObj) {
+                            return <div key={index} className="p-2"></div>;
+                          }
+
+                          const isSelected =
+                            selectedDate === formatDate(dayObj.date);
+
+                          return (
+                            <button
+                              key={index}
+                              type="button"
+                              onClick={() => handleDateSelect(dayObj)}
+                              disabled={dayObj.isDisabled}
+                              className={`
+                                p-2 text-sm rounded-lg transition-all duration-300 relative
+                                ${
+                                  dayObj.isDisabled
+                                    ? "text-gray-300 cursor-not-allowed bg-gray-50"
+                                    : "text-gray-700 hover:bg-rose-50 cursor-pointer"
+                                }
+                                ${
+                                  dayObj.isSunday && !dayObj.isDisabled
+                                    ? "bg-red-50 text-red-400 cursor-not-allowed"
+                                    : ""
+                                }
+                                ${
+                                  dayObj.isSaturday && !dayObj.isDisabled
+                                    ? "bg-amber-50 text-amber-600"
+                                    : ""
+                                }
+                                ${
+                                  isSelected
+                                    ? "bg-rose-500 text-white hover:bg-rose-600"
+                                    : ""
+                                }
+                              `}
+                            >
+                              {dayObj.day}
+                              {dayObj.isSunday && (
+                                <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg"></div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Jelmagyarázat */}
+                      <div className="mt-4 text-xs text-gray-500 space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 bg-red-100 rounded"></div>
+                          <span>Vasárnap - Zárva</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 bg-amber-100 rounded"></div>
+                          <span>Szombat - Korlátozott (09:00-13:00)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-sm text-gray-500 mt-2">
+                  Foglalás maximum 1 hónapra előre lehetséges. Vasárnap zárva
+                  vagyunk.
+                </p>
+                {selectedDate && new Date(selectedDate).getDay() === 6 && (
+                  <p className="text-sm text-amber-600 mt-1 font-medium">
+                    Szombaton 13:00-ig fogadunk vendégeket.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -296,7 +547,7 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
                   <span>Válasszon időpontot</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {timeSlots.map((time) => (
+                  {availableTimeSlots.map((time) => (
                     <button
                       key={time}
                       type="button"
@@ -311,6 +562,11 @@ export default function BookingModal({ isOpen, onClose, preSelectedService }) {
                     </button>
                   ))}
                 </div>
+                {availableTimeSlots.length === 0 && selectedDate && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Kérjük, válasszon dátumot az időpontok megjelenítéséhez.
+                  </p>
+                )}
               </div>
             </div>
 

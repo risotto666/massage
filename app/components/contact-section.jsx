@@ -68,7 +68,7 @@ export default function ContactSection({ onOpenBooking }) {
             return (
               <Card
                 key={index}
-                className="group cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl border-0 bg-white/80 backdrop-blur-sm animate-slide-in-up"
+                className="group  transform transition-all duration-500 hover:scale-105 hover:shadow-2xl border-0 bg-white/80 backdrop-blur-sm animate-slide-in-up"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <CardContent className="p-6 text-center">

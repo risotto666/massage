@@ -60,19 +60,19 @@ export default function HeroSection({ onOpenBooking }) {
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-6 pt-8 animate-fade-in delay-700">
-            <div className="text-center group cursor-pointer">
+            <div className="text-center group ">
               <div className="text-3xl font-bold text-rose-600 group-hover:scale-110 transition-transform duration-300">
                 5+
               </div>
               <div className="text-sm text-gray-500">Év tapasztalat</div>
             </div>
-            <div className="text-center group cursor-pointer">
+            <div className="text-center group ">
               <div className="text-3xl font-bold text-amber-600 group-hover:scale-110 transition-transform duration-300">
                 500+
               </div>
               <div className="text-sm text-gray-500">Elégedett ügyfél</div>
             </div>
-            <div className="text-center group cursor-pointer">
+            <div className="text-center group ">
               <div className="text-3xl font-bold text-emerald-600 group-hover:scale-110 transition-transform duration-300">
                 10+
               </div>
